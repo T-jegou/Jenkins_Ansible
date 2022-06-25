@@ -1,2 +1,5 @@
 # Jenkins_Ansible
-Install Jenkins CI throught this playbook on rhel.
+Install Jenkins CI playbook method using Ansible
+
+OS supported :
+  - RHEL
