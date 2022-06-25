@@ -19,16 +19,10 @@
       name: '*'
       state: latest
 
-  # Install java on amazon_linux AMI
-  - name: Install java 
-    ansible.builtin.shell: sudo amazon-linux-extras install java-openjdk11 -y
-    become: true
-
-  # Install java on RHEL
-  # - name: Install java
-  #   yum:
-  #     name: java-11-openjdk-devel
-  #     state: present
+  - name: Install java
+    yum:
+      name: java-11-openjdk-devel
+      state: present
   
   - name: Install jenkins
     yum:
@@ -44,11 +38,32 @@
       name: jenkins
       state: started
   
+  # Install yum-utils dependencies to manage repo
+  - name: Install yum-utils 
+    yum:
+      name: yum-utils
+      state: latest
+  
+  # Add hashicorp repository
+  - name: Add hashicorp repository
+    get_url:
+      url: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+      dest: /etc/yum.repos.d/hashicorp.repo
+
+  # Install packer 
+  - name: Install packer and terraform
+    yum:
+      name:
+        - terraform
+        - packer
+      state: latest
+        
   - name: Read default password
     ansible.builtin.shell: cat /var/lib/jenkins/secrets/initialAdminPassword
     register: default_password
 
   - name: Print the default password
     debug:
-      msg: "Mot de passe par défaut : {{ default_password.stdout }}" 
+      msg: "Mot de passe Jenkins par défaut : {{ default_password.stdout }}" 
+  
   
